@@ -54,3 +54,36 @@ app.post("/careerPathGeneration", async (req, res) => {
     res.json({ error: e.message });
   }
 });
+
+
+app.post("/aiResumeCreation", async (req, res) => {
+    console.log("hit", req.body.userInput);
+  
+    try {
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a resume builder. Please ask the user's name, skills, education and work experience. Please ask for the years that the user went to each place of education. Please ask for the years that the user worked at each job. When you have the correct information, please turn it into a pdf for the user.",
+          },
+          {
+            role: "user",
+            content: req.body.userInput,
+          },
+        ],
+      });
+  
+      console.log(completion.choices[0].message);
+  
+      const message = completion.choices[0].message;
+  
+      res.json({
+        message: message,
+      });
+    } catch (e) {
+      console.log(e.message);
+      res.json({ error: e.message });
+    }
+  });
