@@ -11,8 +11,8 @@ dotenv.config();
 app.listen(8000);
 app.use(
   cors({
-    // origin: "http://localhost:3000",
-    origin: "https://getfulfil.com",
+    origin: "http://localhost:3000",
+    // origin: "https://getfulfil.com",
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   })
 );
@@ -66,7 +66,8 @@ app.post("/aiResumeCreation", async (req, res) => {
           {
             role: "system",
             content:
-              "You are a resume builder. Please ask the user's name, skills, education and work experience. Please ask for the years that the user went to each place of education. Please ask for the years that the user worked at each job. When you have the correct information, please turn it into a pdf for the user.",
+            
+              "You are a professional resume builder. Please create a resume based off of the information the user gives you",
           },
           {
             role: "user",
