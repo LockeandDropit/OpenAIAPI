@@ -55,36 +55,66 @@ app.post("/careerPathGeneration", async (req, res) => {
   }
 });
 
-
 app.post("/aiResumeCreation", async (req, res) => {
-    console.log("hit", req.body.userInput);
-  
-    try {
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content:
-            
-              "You are a professional resume builder. Please create a resume based off of the information the user gives you",
-          },
-          {
-            role: "user",
-            content: req.body.userInput,
-          },
-        ],
-      });
-  
-      console.log(completion.choices[0].message);
-  
-      const message = completion.choices[0].message;
-  
-      res.json({
-        message: message,
-      });
-    } catch (e) {
-      console.log(e.message);
-      res.json({ error: e.message });
-    }
-  });
+  console.log("hit", req.body.userInput);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a professional resume builder. Please create a resume based off of the information the user gives you",
+        },
+        {
+          role: "user",
+          content: req.body.userInput,
+        },
+      ],
+    });
+
+    console.log(completion.choices[0].message);
+
+    const message = completion.choices[0].message;
+
+    res.json({
+      message: message,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ error: e.message });
+  }
+});
+
+app.post("/getJobs", async (req, res) => {
+  console.log("hit", req.body.userInput);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content:
+            "Can you return the following information so each job listing is it's own object in an array and each piece of information (location, description, compensation, etc) is broken up into a key-value pair in the object? You are a personal assistant to someone who is looking to find current job openings directly from company websites, not third-party job boards or government websites. Please limit this to three results and provide a link directly to this specific job opening. These jobs should be within 25 miles of the user's city. These jobs should be very relevant to the user's interests. The jobs should be equal to or greater than the user's current pay rate.",
+        },
+        {
+          role: "user",
+          content: req.body.userInput,
+        },
+      ],
+    });
+
+    console.log(completion.choices[0].message);
+
+    const message = completion.choices[0].message;
+
+    res.json({
+      message: message,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ error: e.message });
+  }
+});
