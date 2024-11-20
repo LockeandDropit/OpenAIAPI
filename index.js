@@ -118,3 +118,36 @@ app.post("/getJobs", async (req, res) => {
     res.json({ error: e.message });
   }
 });
+
+
+app.post("/getEdu", async (req, res) => {
+  console.log("hit", req.body.userInput);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content:
+            "Please output the following information in structured JSON format without using markdown code blocks. Please label each assign the following keys to their corresponding value pair; The institution key is institution, the program name key is program_name, the location key is location, the description key is called description, the percent increase from the user's current pay key is called percent_increase, and the salary after completion is called salary_after_completion. You are a personal assistant to someone who wants to increase their skill set and earning potential as it relates to their career and interests. Please limit this to three results and provide a link directly to the specific training, education, or certificate. These opportunities should be within 25 miles of the user's city. These education, certificate, or technical training should be very relevant to the user's interests. The potential average salary of someone who completes this training should be higher than the user's current income. Please indicate the average pay for an individual who completes the training, education, or certificate you return.",
+        },
+        {
+          role: "user",
+          content: req.body.userInput,
+        },
+      ],
+    });
+
+    console.log(completion.choices[0].message);
+
+    const message = completion.choices[0].message;
+
+    res.json({
+      message: message,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ error: e.message });
+  }
+});
