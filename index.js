@@ -29,7 +29,7 @@ app.post("/careerPathGeneration", async (req, res) => {
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
-      stream: "true",
+      stream:   true,
       messages: [
         {
           role: "system",
@@ -62,7 +62,7 @@ app.post("/aiResumeCreation", async (req, res) => {
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
-      stream: "true",
+      stream: true,
       messages: [
         {
           role: "system",
@@ -98,7 +98,7 @@ app.post("/getJobs", async (req, res) => {
       messages: [
         {
           role: "system",
-          stream: "true",
+          stream: true,
           content:
             "Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please label each assign the following keys to their corresponding value pair; The company name key is company, the location key is location, the pay rate information is calledpay_rate the job description is called job_description, and the job title is called job_title.  You are a personal assistant to someone who is looking to find current job openings directly from company websites, not third-party job boards or government websites. Please limit this to three results and provide a link directly to the website's career page. These jobs should be within 25 miles of the user's city. These jobs should be very relevant to the user's interests. The jobs should be equal to or greater than the user's current pay rate.",
         },
@@ -129,7 +129,7 @@ app.post("/getEdu", async (req, res) => {
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
-      stream: "true",
+      stream: true,
       messages: [
         {
           role: "system",
