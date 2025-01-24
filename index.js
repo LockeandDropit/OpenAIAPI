@@ -156,3 +156,37 @@ app.post("/getEdu", async (req, res) => {
     res.json({ error: e.message });
   }
 });
+
+
+app.post("/getIndustryRecommendation", async (req, res) => {
+  console.log("hit", req.body.userInput);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      // stream: true,
+      messages: [
+        {
+          role: "system",
+          content:
+            "Please take the user's input and find an industry that would be good for them to work in, give a 2 sentence overview of the industry, average pay (number as a string) in this industry, and describe how much that industry is expected to grow over the next 10 years (keep this to 3 sentences)? Please return it in JSON with the recommendation being labeled recommendation, the overview being overview, outlook being outlook, and average pay labeled average_pay. Can you link the source to the average pay and outlook, labeling them average_pay_link and outlook_link respectively?",
+        },
+        {
+          role: "user",
+          content: req.body.userInput,
+        },
+      ],
+    });
+
+    console.log(completion.choices[0].message);
+
+    const message = completion.choices[0].message;
+
+    res.json({
+      message: message,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ error: e.message });
+  }
+});
