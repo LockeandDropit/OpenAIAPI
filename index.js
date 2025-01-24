@@ -169,7 +169,7 @@ app.post("/getIndustryRecommendation", async (req, res) => {
         {
           role: "system",
           content:
-            "Please take the user's input and find an industry that would be good for them to work in, give a 2 sentence overview of the industry, average pay (number as a string) in this industry, and describe how much that industry is expected to grow over the next 10 years (keep this to 3 sentences)? Please return it in JSON with the recommendation being labeled recommendation, the overview being overview, outlook being outlook, and average pay labeled average_pay. Can you link the source to the average pay and outlook, labeling them average_pay_link and outlook_link respectively?",
+            "Please take the user's input and find an industry that would be good for them to work in, give a 2 sentence personalized reason as to why you think this would be a good fit for the user, average pay (number as a string) in this industry, and describe how much that industry is expected to grow over the next 10 years (keep this to 3 sentences)? Please return it in JSON with the recommendation being labeled recommendation, the overview being overview, outlook being outlook, and average pay labeled average_pay. Can you link the source to the average pay and outlook, labeling them average_pay_link and outlook_link respectively?",
         },
         {
           role: "user",
