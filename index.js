@@ -11,8 +11,8 @@ dotenv.config();
 app.listen(8000);
 app.use(
   cors({
-    // origin: "http://localhost:3000",
-    origin: "https://getfulfil.com",
+    origin: "http://localhost:3000",
+    // origin: "https://getfulfil.com",
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   })
 );
@@ -168,6 +168,41 @@ app.post("/getIndustryRecommendation", async (req, res) => {
           role: "system",
           content:
             "Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please take the user's input and find an industry that would be good for them to work in, give a 2 sentence personalized reason as to why you think this would be a good fit for the user, the average pay (number as a string) in this industry, and describe how much that industry is expected to grow over the next 10 years (keep this to 3 sentences)? Please return it in JSON with the recommendation being labeled recommendation, the overview being overview, outlook being outlook, and average pay labeled average_pay. Can you link the source to the average pay and outlook, labeling them average_pay_link and outlook_link respectively?",
+        },
+        {
+          role: "user",
+          content: req.body.userInput,
+        },
+      ],
+    });
+
+    console.log(completion.choices[0].message);
+
+    const message = completion.choices[0].message;
+
+    res.json({
+      message: message,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ error: e.message });
+  }
+});
+
+
+
+app.post("/getResumeHelp", async (req, res) => {
+  console.log("hit", req.body.userInput);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+        
+          content:
+            "Return the following as **raw markdown**, without extra formatting or quotes:, using bullet points for each separate responsibility. Do not add a label prior to the returned content. The user is creating a resume and is giving you a few sentences about what they did for work. Please turn it into 3-5 bullet points that would be appropriate for a resume.",
         },
         {
           role: "user",
