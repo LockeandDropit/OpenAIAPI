@@ -223,3 +223,36 @@ app.post("/getResumeHelp", async (req, res) => {
     res.json({ error: e.message });
   }
 });
+
+app.post("/getResumeModification", async (req, res) => {
+  console.log("hit", req.body);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+        
+          content:
+            "Return the following as **raw markdown**, without extra formatting or quotes:, using bullet points for each separate responsibility. Do not add a label prior to the returned content. The user is creating a resume and is giving you their job title and a few sentences about what they did for work. They are making this resume to cater to a specific job they are applying to, please tailor the output to cater towards the career field they are applying to. Please turn each separate experience they submit into 3-5 bullet points that would be appropriate for a resume.",
+        },
+        {
+          role: "user",
+          content: req.body.passedData, 
+        },
+      ],
+    });
+
+    console.log(completion.choices[0].message);
+
+    const message = completion.choices[0].message;
+
+    res.json({
+      message: message,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ error: e.message });
+  }
+});
