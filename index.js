@@ -11,8 +11,8 @@ dotenv.config();
 app.listen(8000);
 app.use(
   cors({
-    // origin: "http://localhost:3000",
-    origin: "https://getfulfil.com",
+    origin: "http://localhost:3000",
+    // origin: "https://getfulfil.com",
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   })
 );
@@ -99,7 +99,7 @@ app.post("/getJobs", async (req, res) => {
           role: "system",
         
           content:
-            "Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please label each assign the following keys to their corresponding value pair; The company name key is company, the location key is location, the pay rate information is called pay_rate the job description is called job_description, the percent increase (please limit to whole numbers) from the user's current pay key is called percent_increase, the website is called link, and the job title is called job_title. All values should be retrurned as strings. You are a personal assistant to someone who is looking to find current job openings directly from company websites, not third-party job boards or government websites. Please limit this to three results and provide a link to the website's main page. These jobs should be within 25 miles of the user's city. These jobs should be very relevant to the user's interests. The jobs should be equal to or greater than the user's current pay rate.",
+            "Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please ensure the last object's closing bracket is closed with '\n' . Please label each assign the following keys to their corresponding value pair; The company name key is company, the location key is location, the pay rate information is called pay_rate the job description is called job_description, the percent increase (please limit to whole numbers) from the user's current pay key is called percent_increase, the website is called link, and the job title is called job_title. All values should be retrurned as strings. You are a personal assistant to someone who is looking to find current job openings directly from company websites, not third-party job boards or government websites. Please limit this to three results and provide a link to the website's main page. These jobs should be within 25 miles of the user's city. These jobs should be very relevant to the user's interests. The jobs should be equal to or greater than the user's current pay rate.",
         },
         {
           role: "user",
@@ -236,6 +236,39 @@ app.post("/getResumeModification", async (req, res) => {
         
           content:
             "Return the following as **raw markdown**, without extra formatting or quotes:, using bullet points for each separate responsibility. Do not add a label prior to the returned content. The user is creating a resume and is giving you their job title and a few sentences about what they did for work. They are making this resume to cater to a specific job they are applying to, please tailor the output to cater towards the career field they are applying to. Please turn each separate experience they submit into 3-5 bullet points that would be appropriate for a resume.",
+        },
+        {
+          role: "user",
+          content: req.body.passedData, 
+        },
+      ],
+    });
+
+    console.log(completion.choices[0].message);
+
+    const message = completion.choices[0].message;
+
+    res.json({
+      message: message,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ error: e.message });
+  }
+});
+
+app.post("/getResources", async (req, res) => {
+  console.log("hit", req.body);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+        
+          content:
+            "Please find 2 organizations for the state of Wisconsin similar that are non-profits, and can be focused on any of the following; helping people get job skills, job training, career resources, language barrier assistance, financial planning, resume writing, etc. Please convert the list into a JSON array of objects. Each object must include the keys: 'name', 'focus', 'services', 'website', 'state', 'city', and 'description'. Please return the value for 'services' as an array. For the 'description' key, include a brief summary that combines the organization’s focus and services.",
         },
         {
           role: "user",
