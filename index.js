@@ -11,8 +11,8 @@ dotenv.config();
 app.listen(8000);
 app.use(
   cors({
-    // origin: "http://localhost:3000",
-    origin: "https://getfulfil.com",
+    origin: "http://localhost:3000",
+    // origin: "https://getfulfil.com",
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   })
 );
@@ -99,7 +99,7 @@ app.post("/getJobs", async (req, res) => {
           role: "system",
         
           content:
-            "Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please ensure the last object's closing bracket is closed with '\n' . Please label each assign the following keys to their corresponding value pair; The company name key is company, the location key is location, the pay rate information is called pay_rate the job description is called job_description, the percent increase (please limit to whole numbers) from the user's current pay key is called percent_increase, the website is called link, and the job title is called job_title. All values should be retrurned as strings. You are a personal assistant to someone who is looking to find current job openings directly from company websites, not third-party job boards or government websites. Please limit this to three results and provide a link to the website's main page. These jobs should be within 25 miles of the user's city. These jobs should be very relevant to the user's interests. The jobs should be equal to or greater than the user's current pay rate.",
+            "Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please ensure the last object's closing bracket is closed with '\n' . Please label each assign the following keys to their corresponding value pair; The company name key is company, the location key is location, the pay rate information is called pay_rate the job description is called job_description, the percent increase (please limit to whole numbers) from the user's current pay key is called percent_increase, the website is called link, and the job title is called job_title. All values should be retrurned as strings. You are a personal assistant to someone who is looking to find current job openings directly from company websites, not third-party job boards or government websites. Please limit this to 9 results and provide a link to the website's main page. These jobs should be within 25 miles of the user's city. These jobs should be very relevant to the user's interests. The jobs should be equal to or greater than the user's current pay rate.",
         },
         {
           role: "user",
@@ -133,7 +133,7 @@ app.post("/getEdu", async (req, res) => {
         {
           role: "system",
           content:
-            "Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please label each assign the following keys to their corresponding value pair; The institution key is institution, the program name key is program_name, the location key is location, the description key is called description, the percent increase (please limit to whole numbers) from the user's current pay key is called percent_increase, the website is called link, and the salary after completion is called salary_after_completion. All values should be retrurned as strings. You are a personal assistant to someone who wants to increase their skill set and earning potential as it relates to their career and interests. Please limit this to three results and provide a link directly to the homepage of the website. These opportunities should be within 25 miles of the user's city. These education, certificate, or technical training should be very relevant to the user's interests and generally take a maximum of 3 years to complete. The potential average salary of someone who completes this training should be higher than the user's current income. Please indicate the average pay for an individual who completes the training, education, or certificate you return.",
+            "Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please label each assign the following keys to their corresponding value pair; The institution key is institution, the program name key is program_name, the location key is location, the description key is called description, the percent increase (please limit to whole numbers) from the user's current pay key is called percent_increase, the website is called link, and the salary after completion is called salary_after_completion. All values should be retrurned as strings. You are a personal assistant to someone who wants to increase their skill set and earning potential as it relates to their career and interests. Please limit this to six results and provide a link directly to the homepage of the website. These opportunities should be within 25 miles of the user's city. These education, certificate, or technical training should be very relevant to the user's interests and generally take a maximum of 3 years to complete. The potential average salary of someone who completes this training should be higher than the user's current income. Please indicate the average pay for an individual who completes the training, education, or certificate you return.",
         },
         {
           role: "user",
@@ -269,6 +269,41 @@ app.post("/getResources", async (req, res) => {
         
           content:
             "Please find 2 organizations for the state of Wisconsin similar that are non-profits, and can be focused on any of the following; helping people get job skills, job training, career resources, language barrier assistance, financial planning, resume writing, etc. Please convert the list into a JSON array of objects. Each object must include the keys: 'name', 'focus', 'services', 'website', 'state', 'city', and 'description'. Please return the value for 'services' as an array. For the 'description' key, include a brief summary that combines the organization’s focus and services.",
+        },
+        {
+          role: "user",
+          content: req.body.passedData, 
+        },
+      ],
+    });
+
+    console.log(completion.choices[0].message);
+
+    const message = completion.choices[0].message;
+
+    res.json({
+      message: message,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ error: e.message });
+  }
+});
+
+
+app.post("/getJobData", async (req, res) => {
+  console.log("hit", req.body);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+        
+          content:"Provide a detailed career progression for someone in the HVAC industry, structured as a hierarchical object where each job level is nested under the previous level. The root object has a 'name' key with the value 'Start Here' and an 'attributes' key containing an object with 'jobTitle' (empty string), 'snippet' (empty string), and 'timeCommitment' (empty string). The 'children' key contains an array of job level objects. Each job level object has a 'name' key representing the salary range, an 'attributes' key containing an object with 'jobTitle' (string), 'bullet1' (string describing the role's primary function), 'bullet2' (string describing an additional function), and 'timeCommitment' (string describing years of experience required). Nested within each job level object is an optional 'children' key, which is an array of job level objects representing the next career step. Next, generate detailed job descriptions for each HVAC position using an array where each entry is an object containing keys: 'id' (integer matching corresponding job level in the hierarchy), 'jobTitle' (string), 'JobOverview' (string providing a brief description of the role), 'KeyResponsibilities' (array of strings describing duties), 'Qualifications' (array of strings describing required skills or credentials), and 'OpeningsOrEducation' (array of strings listing typical hiring requirements or educational paths). Retain consistent unique IDs across job levels and ensure alignment between the hierarchy and job details array. Additionally, reference the structure used for a Truck Hub Operator career path and apply it to all HVAC roles while expanding on responsibilities and qualifications."
+
+            
         },
         {
           role: "user",
