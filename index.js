@@ -331,7 +331,7 @@ app.post("/careerQuizResponse", async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "o3-mini",
       messages: [
         {
           role: "system",
