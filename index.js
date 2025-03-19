@@ -326,7 +326,40 @@ app.post("/getJobData", async (req, res) => {
 });
 
 
-app.post("/careerQuizResponse", async (req, res) => {
+app.post("/careerQuizResponseInitialOptions", async (req, res) => {
+  console.log("hit", req.body);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "o3-mini",
+      messages: [
+        {
+          role: "system",
+          content:"Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please provide an array of objects, use the following keys for each object in the array; career_title (string), badges (these are the 2 word descriptors, please return this as an array of strings), description (string), average_salary (string), industry_growth (string). You're a mastermind who deeply cares about your friend. You know a ton about the U.S. Job market and it's trends in 2025. I'm giving you the results of their detailed career test. Some answers are key-value pairs for ranking. 1 means the least and 5 is the most. Can you recommend 5-10 good career paths or industries that would be attainable by someone who does not have a college degree but is willing to go to a trade school or something similar. Please make these recommendations based on the demand in their area and their results. Please provide three 2 word ansers that describe why it fits, and one longer answer comprising of 3 sentenses about why this would be a good fit and a brief description of the career."
+            
+        },
+        {
+          role: "user",
+          content: req.body.userInput, 
+        },
+      ],
+    });
+
+    console.log(completion.choices[0].message);
+
+    const message = completion.choices[0].message;
+
+    res.json({
+      message: message,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ error: e.message });
+  }
+});
+
+
+app.post("/careerQuizResponseJobOpenings", async (req, res) => {
   console.log("hit", req.body);
 
   try {
@@ -336,7 +369,7 @@ app.post("/careerQuizResponse", async (req, res) => {
         {
           role: "system",
         
-          content:"Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please use the following keys; career_title (string), badges (these are the 2 word descriptors, please return this as an array of strings), description (string), average_salary (string), industry_growth (string). You're a mastermind who deeply cares about your friend. You know a ton about the U.S. Job market and it's trends in 2025. I'm giving you the results of their detailed career test. Some answers are key-value pairs for ranking. 1 means the least and 5 is the most. Can you recommend a good career that would be attainable by someone who does not have a college degree but is willing to go to a trade school or something similar. Please make this recommendation based on the demand in their area and their results. Please provide three 2 word ansers that describe why it fits, and one longer answer comprising of 3 sentenses about why this would be a good fit and a brief description of the career. Please then return a subarray of 3 objects (still in structured JSON format without using markdown code blocks) with each object being a current entry job opening in the field you've chosen. Please label each assign the following keys to their corresponding value pair; The company name key is company, the location key is location, the pay rate information is called pay_rate the job description is called job_description, the percent increase (please limit to whole numbers) from the user's current pay key is called percent_increase, the website is called link, and the job title is called job_title. Please label the array oj jobs as job_openings. All values should be retrurned as strings. The job openings should come from company websites, not third-party job boards or government websites. Please limit this to 3 results and provide a link to the website's main page. These jobs should be within 25 miles of the user's city.  "
+          content:"Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please return an of 3 objects (still in structured JSON format without using markdown code blocks) with each object being a current entry job opening in the field the user has told you about. Please label each assign the following keys to their corresponding value pair; The company name key is company, the location key is location, the pay rate information is called pay_rate the job description is called job_description, the percent increase (please limit to whole numbers) from the user's current pay key is called percent_increase, the website is called link, and the job title is called job_title. Please label the array oj jobs as job_openings. All values should be retrurned as strings. The job openings should come from company websites, not third-party job boards or government websites. Please limit this to 3 results and provide a link to the website's main page. These jobs should be within 25 miles of the user's city.  "
             
         },
         {
