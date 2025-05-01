@@ -1,18 +1,18 @@
 const { OpenAI } = require("openai");
 
 const cors = require("cors");
-const dotenv = require("dotenv");
+const dotenv =require ("dotenv");
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 dotenv.config();
-app.listen(8000);
+app.listen(8002);
 app.use(
   cors({
     // origin: "http://localhost:3000",
-    origin: "http://localhost:5173",
+    // origin: "http://localhost:5173",
     origin: "https://getfulfil.com",
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   })
@@ -22,14 +22,14 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-console.log("here we go");
+console.log("open AI here we go 8002");
 
 app.post("/careerPathGeneration", async (req, res) => {
   console.log("hit", req.body.userInput);
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       // stream:   true,
       messages: [
         {
@@ -61,7 +61,7 @@ app.post("/aiResumeCreation", async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
    
       messages: [
         {
@@ -128,7 +128,7 @@ app.post("/getEdu", async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       // stream: true,
       messages: [
         {
@@ -162,7 +162,7 @@ app.post("/getIndustryRecommendation", async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       // stream: true,
       messages: [
         {
@@ -197,7 +197,7 @@ app.post("/getResumeHelp", async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
@@ -230,7 +230,7 @@ app.post("/getResumeModification", async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
@@ -263,7 +263,7 @@ app.post("/getResources", async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
@@ -297,7 +297,7 @@ app.post("/getJobData", async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
@@ -327,16 +327,18 @@ app.post("/getJobData", async (req, res) => {
 });
 
 
+const JOB_LIST_1 = `Registered Nurse, Dental Hygienist, Radiologic Technologist, Diagnostic Medical Sonographer, Magnetic Resonance Imaging Technologist, Nuclear Medicine Technologist, Cardiovascular Technologist, Respiratory Therapist, Occupational Therapy Assistant, Physical Therapist Assistant, Surgical Technologist, Clinical Laboratory Technician, Radiation Therapist, Elevator Installer & Repairer, Electrical Power-Line Installer & Repairer, Power Plant Operator, Nuclear Reactor Operator, Industrial Machinery Mechanic, Avionics Technician, Telecommunications Line Installer, Security & Fire Alarm System Installer, Aircraft Mechanic, Diesel Mechanic, Boilermaker, Wind Turbine Technician, Air Traffic Controller, Commercial Airline Pilot, Locomotive Engineer, Transportation Inspector, Ship Engineer, Railroad Conductor, Real Estate Broker, Insurance Sales Agent, Claims Adjuster / Examiner / Investigator, Loan Officer, Commercial Insurance Agent, Tax Preparer, Customs Broker, Title Examiner, Court Reporter, Purchasing Agent, Web Developer, Software Quality Assurance Tester, Computer Network Support Specialist, Computer User Support Specialist, Database Technician, Computer Systems Test Engineer, Network Technician, Telecommunications Equipment Installer, Police Officer, First-Line Supervisor of Police & Detectives, Fire Inspector & Investigator, Correctional Officer Supervisor, Security Manager, Construction Manager, Structural Iron & Steel Worker, Stationary Engineer & Boiler Operator, Pile-Driver Operator, Brickmason & Blockmason, Stonemason, Glazier, Reinforcing Iron & Rebar Worker, Nuclear Technician, Biological Technician, Environmental Science & Protection Technician, Broadcast Technician, Sound Engineering Technician, Audio & Video Equipment Technician, Biomedical Equipment Technician, Gas Plant Operator, Chemical Plant & System Operator, Petroleum Pump System Operator,`;
+const JOB_LIST_2 =  `Power Distributor & Dispatcher, Flight Attendant, Interpreter / Translator (e.g., ASL), Construction & Building Inspector, Wholesale & Manufacturing Sales Representative, Structural Ironworker, Elevator Constructor, Appraiser & Assessor of Real Estate, Insurance Appraiser (Auto Damage), Crane Operator, Commercial Diver, Postal Service Mail Sorter, Railway Signal, Track Switch & Crossing Controller, Pipefitter & Steamfitter, Plumber, HVAC Service Technician, Carpenter Supervisor, Gas Utility Operator, Powerhouse, Substation, & Relay Electrical Repairer, Solar Photovoltaic Installer, Geothermal Technician, Production Supervisor (Manufacturing), Warehouse Manager, Retail Store Manager, Hospitality Manager, Food Service Manager, Branch Office Manager (Banking), Emergency Medical Services Manager`;
 app.post("/careerQuizResponseInitialOptions", async (req, res) => {
   console.log("hit", req.body);
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "o3-mini",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
-          content:"Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please provide an object in an array, use the following keys for the key-value pairs; career_title (string), badges (these are the 2 word descriptors, please return this as an array of strings), description (string), why_this_result(string), result_sources (provide url) (array with as mny strings as needed), average_salary (string with a $ before the number. Please only give the number and do not give word descriptor. Include the comma where appropriate), salary_source (provide url) (array of string(s)), industry_growth (string) growth_sources ) (provide url) (array with as many strings as needed),. You're a mastermind who deeply cares about your friend. You know a ton about the U.S. Job market and it's trends in 2025. I'm giving you the results of their detailed career test. Some answers are key-value pairs for ranking. 1 means the least and 5 is the most. Can you recommend 3 good entry-level jobs or industries in general that would be attainable by someone who does not have a college degree but is willing to go to a trade school or something similar, or even an entry level job that pays well if done correctly. Please make these recommendations based on the demand in their area and their results. Please provide three 2 word answers that describe why it fits, and one longer answer comprising of 3 sentences about why this would be a good fit and a brief description of the career. Please explain why this result is a good fit in their area and cite your sources."
+          content:`Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please provide an object in an array, use the following keys for the key-value pairs; career_title (string), badges (these are the 2 word descriptors, please return this as an array of strings), description (string), why_this_result(string), result_sources (provide url) (array with as mny strings as needed), average_salary (string with a $ before the number. Please only give the number and do not give word descriptor. Include the comma where appropriate), salary_source (provide url) (array of string(s)), industry_growth (string, please only do percent e.g. 5%) growth_sources (provide url) (array with as many strings as needed),. You're a Career Guidance Professional. You are extremely knowledgable about the Minnesota Job market and it's trends in 2025. I'm giving you the results of their detailed career test. Some answers are key-value pairs for ranking. 1 means the least and 5 is the most. Can you recommend 3 good entry-level jobs that would fit their quiz results from the following list: ${JOB_LIST_1} ${JOB_LIST_2}. Please make these recommendations based on the demand in their area and their results. Please provide three 2 word answers that describe why it fits, and one longer answer comprising of 3 sentences about why this would be a good fit and a brief description of the career. Please explain why this result is a good fit in their area and cite your sources.`
 
         },
         {
@@ -365,7 +367,7 @@ app.post("/careerQuizResponseJobOpenings", async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "o3-mini",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
