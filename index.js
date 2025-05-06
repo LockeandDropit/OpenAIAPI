@@ -361,6 +361,38 @@ app.post("/careerQuizResponseInitialOptions", async (req, res) => {
   }
 });
 
+app.post("/careerQuizResponseRedo", async (req, res) => {
+  console.log("hit", req.body);
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4.1",
+      messages: [
+        {
+          role: "system",
+          content:`Please output the following information in structured JSON format without using markdown code blocks and please do not add a label to the array. Please provide an object in an array, use the following keys for the key-value pairs; career_title (string), badges (these are the 2 word descriptors, please return this as an array of strings), description (string), why_this_result(string), result_sources (provide url) (array with as mny strings as needed), average_salary (string with a $ before the number. Please only give the number and do not give word descriptor. Include the comma where appropriate), salary_source (provide url) (array of string(s)), industry_growth (string, please only do percent e.g. 5%) growth_sources (provide url) (array with as many strings as needed),. You're a Career Guidance Professional. You are extremely knowledgable about the Minnesota Job market and it's trends in 2025. I'm giving you the results of their detailed career test. Some answers are key-value pairs for ranking. 1 means the least and 5 is the most. Can you recommend 3 good entry-level jobs that would fit their quiz results from the following list: ${JOB_LIST_1} ${JOB_LIST_2}. Please make these recommendations based on the demand in their area and their results. They received recommendations and want three different ones, they've noted what jobs they don't want to have presented again. Please provide three 2 word answers that describe why it fits, and one longer answer comprising of 3 sentences about why this would be a good fit and a brief description of the career. Please explain why this result is a good fit in their area and cite your sources.`
+
+        },
+        {
+          role: "user",
+          content: req.body.userInput, 
+        },
+      ],
+    });
+
+    console.log(completion.choices[0].message);
+
+    const message = completion.choices[0].message;
+
+    res.json({
+      message: message,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.json({ error: e.message });
+  }
+});
+
 
 app.post("/careerQuizResponseJobOpenings", async (req, res) => {
   console.log("hit", req.body);
